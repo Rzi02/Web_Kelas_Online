@@ -169,23 +169,6 @@
 
             </div>
 
-            <!-- KELOLA KELAS -->
-            <div class="card table-card mb-4">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h5 class="fw-bold mb-1">Kelola Kelas</h5>
-                        <p class="text-muted mb-0">
-                            Tambahkan dan atur kelas online.
-                        </p>
-                    </div>
-
-                    <a href="{{ route('admin.kelas.create') }}"
-                       class="btn btn-primary">
-                        <i class="bi bi-plus-lg me-1"></i> Tambah Kelas
-                    </a>
-                </div>
-            </div>
-
             <!-- PENDAFTARAN TERBARU -->
             <div class="table-card">
 
