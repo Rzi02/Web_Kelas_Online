@@ -20,23 +20,14 @@
             KelasOnline<span>.</span>
         </a>
 
-        <!-- Tombol Hamburger Mobile -->
         <button class="navbar-toggler" type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#mainNav"
-                aria-controls="mainNav"
-                aria-expanded="false"
-                aria-label="Buka menu navigasi">
-
+                data-bs-toggle="collapse" data-bs-target="#mainNav">
             <span class="bar"></span>
             <span class="bar"></span>
             <span class="bar"></span>
-
         </button>
 
-        <!-- Menu Navigasi -->
         <div class="collapse navbar-collapse" id="mainNav">
-
             <ul class="navbar-nav ms-auto align-items-lg-center gap-2">
 
                 <li class="nav-item">
@@ -56,19 +47,19 @@
                         Kategori
                     </a>
                 </li>
-
+                
                 <li class="nav-item">
-                    <a class="nav-link nav2" href="#kontak">
-                        Kontak
-                    </a>
+                  <a class="nav-link nav2" href="#kontak">
+                    Kontak
+                  </a>
                 </li>
-
+                
                 <li class="nav-item">
                     <a href="{{ route('pendaftaran.cek') }}" class="nav-link nav2">
                         Cek Status Pendaftaran
                     </a>
                 </li>
-
+                
                 <li class="nav-item ms-lg-2">
                     <a href="{{ route('login') }}" class="btn btn-primary btn-sm-custom">
                         Login Admin
@@ -76,7 +67,6 @@
                 </li>
 
             </ul>
-
         </div>
     </div>
 </nav>
@@ -190,6 +180,7 @@
                 Temukan kelas terbaik untuk mengembangkan kemampuanmu.
             </p>
         </div>
+
 
         <!-- PENCARIAN -->
         <form action="{{ route('home') }}" method="GET" class="mb-4">
