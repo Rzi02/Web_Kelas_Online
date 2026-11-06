@@ -6,21 +6,25 @@ use App\Models\Kelas;
 use App\Models\Pendaftar;
 use App\Models\Pendaftaran;
 use Illuminate\Http\Request;
+use App\Enums\StatusPendaftaran;
 
 class PendaftaranController extends Controller
 {
-    // Menampilkan data pendaftaran di halaman admin
+    // Menampilkan data pendaftaran di admin
     public function index()
     {
-        $pendaftaran = Pendaftaran::with(['kelas', 'pendaftar'])
-            ->latest()
-            ->paginate(10);
+        $pendaftaran = Pendaftaran::with([
+            'kelas.kategori',
+            'pendaftar'
+        ])
+        ->latest()
+        ->paginate(10);
 
         return view('admin.pendaftaran', compact('pendaftaran'));
     }
 
-    // Menyimpan pendaftaran dari user
-    public function store(Request $request, $id)
+    // Menyimpan pendaftaran dari pengunjung
+    public function store(Request $request, int $id)
     {
         $request->validate([
             'nama' => 'required|string|max:255',
@@ -28,7 +32,8 @@ class PendaftaranController extends Controller
             'no_telepon' => 'required|string|max:20',
         ]);
 
-        $kelas = Kelas::where('status', 'published')->findOrFail($id);
+        $kelas = Kelas::where('status', 'published')
+            ->findOrFail($id);
 
         $pendaftar = Pendaftar::firstOrCreate(
             ['email' => $request->email],
@@ -38,24 +43,31 @@ class PendaftaranController extends Controller
             ]
         );
 
-        $sudahDaftar = Pendaftaran::where('id_kelas', $id)
+        // Memeriksa apakah sudah pernah mendaftar
+        $sudahDaftar = Pendaftaran::where('id_kelas', $kelas->id_kelas)
             ->where('id_pendaftar', $pendaftar->id_pendaftar)
             ->exists();
 
         if ($sudahDaftar) {
-            return back()->with('error', 'Anda sudah mendaftar kelas ini.');
+            return back()->with(
+                'error',
+                'Anda sudah mendaftar kelas ini.'
+            );
         }
 
         Pendaftaran::create([
-            'id_kelas' => $id,
+            'id_kelas' => $kelas->id_kelas,
             'id_pendaftar' => $pendaftar->id_pendaftar,
             'status' => 'pending',
         ]);
 
-        return back()->with('success', 'Pendaftaran berhasil dikirim!');
+        return back()->with(
+            'success',
+            'Pendaftaran berhasil dikirim!'
+        );
     }
 
-    // Mengubah status pendaftaran oleh admin
+    // Mengubah status pendaftaran
     public function updateStatus(Request $request, int $id)
     {
         $data = $request->validate([
@@ -63,32 +75,57 @@ class PendaftaranController extends Controller
         ]);
 
         $pendaftaran = Pendaftaran::findOrFail($id);
-        $pendaftaran->update($data);
+
+        // Mengambil status saat ini
+        $statusSekarang = $pendaftaran->status instanceof StatusPendaftaran
+            ? $pendaftaran->status->value
+            : $pendaftaran->status;
+
+        // Status yang sudah diproses tidak boleh diubah
+        if ($statusSekarang !== 'pending') {
+            return back()->with(
+                'error',
+                'Pendaftaran sudah diproses dan status tidak dapat diubah lagi.'
+            );
+        }
+
+        $pendaftaran->update([
+            'status' => $data['status'],
+        ]);
 
         return redirect()->route('admin.pendaftaran')
-            ->with('success', 'Status pendaftaran telah berhasil diperbarui.');
+            ->with(
+                'success',
+                'Status pendaftaran berhasil diperbarui.'
+            );
     }
 
-    // Menampilkan halaman cek status untuk user
+    // Menampilkan halaman cek status
     public function cekStatus()
     {
         return view('pendaftaran.cek-status');
     }
 
-    // Mencari pendaftaran berdasarkan email user
+    // Memeriksa status pendaftaran berdasarkan email
     public function hasilStatus(Request $request)
     {
         $request->validate([
             'email' => 'required|email',
         ]);
 
-        $pendaftaran = Pendaftaran::with(['kelas', 'pendaftar'])
-            ->whereHas('pendaftar', function ($query) use ($request) {
-                $query->where('email', $request->email);
-            })
-            ->latest()
-            ->get();
+        $pendaftaran = Pendaftaran::with([
+            'kelas.kategori',
+            'pendaftar'
+        ])
+        ->whereHas('pendaftar', function ($query) use ($request) {
+            $query->where('email', $request->email);
+        })
+        ->latest()
+        ->get();
 
-        return view('pendaftaran.cek-status', compact('pendaftaran'));
+        return view(
+            'pendaftaran.cek-status',
+            compact('pendaftaran')
+        );
     }
 }
