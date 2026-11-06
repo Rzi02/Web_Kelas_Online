@@ -8,7 +8,7 @@ use App\Http\Controllers\PendaftaranController;
 use App\Http\Controllers\Admin\KelasController as AdminKelasController;
 use App\Http\Controllers\Admin\KategoriController;
 
-// HALAMAN PUBLIK
+// Landing page
 Route::get('/', [HomeController::class, 'index'])
     ->name('home');
 
