@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Kelas;
 
+
 class KelasController extends Controller
 {
     public function show($id)

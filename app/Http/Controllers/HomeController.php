@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Kategori;
 use App\Models\Kelas;
 
+
 class HomeController extends Controller
 {
     public function index(Request $request)
