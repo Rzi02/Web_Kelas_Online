@@ -66,7 +66,7 @@ class PendaftaranController extends Controller
         $pendaftaran->update($data);
 
         return redirect()->route('admin.pendaftaran')
-            ->with('success', 'Status pendaftaran berhasil diperbarui.');
+            ->with('success', 'Status pendaftaran telah berhasil diperbarui.');
     }
 
     // Menampilkan halaman cek status untuk user
