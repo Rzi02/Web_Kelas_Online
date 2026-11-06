@@ -103,6 +103,6 @@ class KelasController extends Controller
         $kelas->delete();
 
         return redirect()->route('admin.kelas')
-            ->with('success', 'Kelas berhasil dihapus.');
+            ->with('success', 'Kelas telah berhasil dihapus.');
     }
 }
