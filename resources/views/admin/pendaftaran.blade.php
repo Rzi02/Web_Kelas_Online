@@ -14,38 +14,6 @@
             font-family: Arial, sans-serif;
         }
 
-        .sidebar {
-            background: #171c35;
-            min-height: 100vh;
-            padding: 25px 18px;
-        }
-
-        .brand {
-            color: white;
-            font-size: 23px;
-            font-weight: bold;
-            margin-bottom: 40px;
-        }
-
-        .brand span {
-            color: #8b7bff;
-        }
-
-        .sidebar a {
-            display: block;
-            color: #b8bfd5;
-            text-decoration: none;
-            padding: 13px;
-            border-radius: 8px;
-            margin-bottom: 8px;
-        }
-
-        .sidebar a:hover,
-        .sidebar a.active {
-            background: #343b65;
-            color: white;
-        }
-
         .content {
             padding: 30px;
         }
@@ -55,6 +23,11 @@
             border-radius: 15px;
             padding: 22px;
             box-shadow: 0 5px 20px rgba(0,0,0,.04);
+        }
+
+        .table thead th {
+            white-space: nowrap;
+            color: #5146d8;
         }
     </style>
 </head>
@@ -89,6 +62,14 @@
                 </div>
             @endif
 
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    @foreach ($errors->all() as $error)
+                        <div>{{ $error }}</div>
+                    @endforeach
+                </div>
+            @endif
+
             <!-- TABEL PENDAFTARAN -->
             <div class="table-card">
 
@@ -102,6 +83,7 @@
                                 <th>Email</th>
                                 <th>No. Telepon</th>
                                 <th>Kelas</th>
+                                <th>Kategori</th>
                                 <th>Tanggal Daftar</th>
                                 <th>Status</th>
                                 <th>Aksi</th>
@@ -140,6 +122,10 @@
                                     </td>
 
                                     <td>
+                                        {{ $item->kelas->kategori->nama_kategori ?? '-' }}
+                                    </td>
+
+                                    <td>
                                         {{ $item->tanggal_daftar
                                             ? $item->tanggal_daftar->format('d-m-Y')
                                             : '-' }}
@@ -164,41 +150,50 @@
 
                                     <!-- AKSI -->
                                     <td>
-                                        <form action="{{ route('admin.pendaftaran.updateStatus', $item->id_pendaftaran) }}"
-                                              method="POST">
+                                        @if ($status == 'pending')
 
-                                            @csrf
-                                            @method('PATCH')
+                                            <form action="{{ route('admin.pendaftaran.updateStatus', $item->id_pendaftaran) }}"
+                                                  method="POST">
 
-                                            <div class="d-flex gap-1">
+                                                @csrf
+                                                @method('PATCH')
 
-                                                <select name="status"
-                                                        class="form-select form-select-sm">
+                                                <div class="d-flex gap-1">
 
-                                                    <option value="pending"
-                                                        {{ $status == 'pending' ? 'selected' : '' }}>
-                                                        Pending
-                                                    </option>
+                                                    <select name="status"
+                                                            class="form-select form-select-sm"
+                                                            required>
 
-                                                    <option value="accepted"
-                                                        {{ $status == 'accepted' ? 'selected' : '' }}>
-                                                        Accepted
-                                                    </option>
+                                                        <option value="" selected disabled>
+                                                            Pilih Status
+                                                        </option>
 
-                                                    <option value="rejected"
-                                                        {{ $status == 'rejected' ? 'selected' : '' }}>
-                                                        Rejected
-                                                    </option>
+                                                        <option value="accepted">
+                                                            Accepted
+                                                        </option>
 
-                                                </select>
+                                                        <option value="rejected">
+                                                            Rejected
+                                                        </option>
 
-                                                <button type="submit"
-                                                        class="btn btn-primary btn-sm">
-                                                    Simpan
-                                                </button>
+                                                    </select>
 
-                                            </div>
-                                        </form>
+                                                    <button type="submit"
+                                                            class="btn btn-primary btn-sm">
+                                                        Simpan
+                                                    </button>
+
+                                                </div>
+                                            </form>
+
+                                        @else
+
+                                            <span class="text-muted small">
+                                                <i class="bi bi-lock-fill me-1"></i>
+                                                Sudah diproses
+                                            </span>
+
+                                        @endif
                                     </td>
 
                                 </tr>
@@ -206,7 +201,7 @@
                             @empty
 
                                 <tr>
-                                    <td colspan="8"
+                                    <td colspan="9"
                                         class="text-center text-muted py-4">
                                         Belum ada pendaftaran.
                                     </td>
