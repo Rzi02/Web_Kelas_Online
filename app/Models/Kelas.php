@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Enums\StatusKelas;
 
+
 class Kelas extends Model
 {
     protected $table = 'kelas';

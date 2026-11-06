@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Enums\StatusPendaftaran;
 
+
 class Pendaftaran extends Model
 {
     protected $table = 'pendaftaran';
